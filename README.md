@@ -21,6 +21,16 @@ OpenQASM is a &nbsp;
 pkg> add OpenQASM#master
 ```
 
+## Usage
+
+This package provides a simple function `OpenQASM.parse` to parse a QASM string to
+its AST according to its BNF specification described in [OpenQASM 2.0](https://github.com/Qiskit/openqasm/tree/OpenQASM2.x).
+
+## Roadmap
+
+- [x] support for QASM 2.0
+- [ ] support for QASM 3.0
+
 ## License
 
 OpenQASM is released under the MIT license.
