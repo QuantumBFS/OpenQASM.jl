@@ -26,6 +26,9 @@ pkg> add OpenQASM#master
 This package provides a simple function `OpenQASM.parse` to parse a QASM string to
 its AST according to its BNF specification described in [OpenQASM 2.0](https://github.com/Qiskit/openqasm/tree/OpenQASM2.x).
 
+
+![demo](demo.png)
+
 ## Roadmap
 
 - [x] support for QASM 2.0
