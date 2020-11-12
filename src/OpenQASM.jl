@@ -11,9 +11,9 @@ include("parse.jl")
 Parse a piece of QASM program at top-level to AST.
 """
 function parse(src::String)
-    ast, _ = RBNF.runparser(Parse.mainprogram, RBNF.runlexer(Parse.QASMLang, src))
+    ast, ctx = RBNF.runparser(Parse.mainprogram, RBNF.runlexer(Parse.QASMLang, src))
+    ctx.tokens.current > ctx.tokens.length || throw(Meta.ParseError("invalid syntax in QASM program"))
     return ast
 end
-
 
 end
