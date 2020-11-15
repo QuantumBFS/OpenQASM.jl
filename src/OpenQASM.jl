@@ -5,6 +5,8 @@ using RBNF
 include("types.jl")
 include("parse.jl")
 
+using .Types: print_qasm
+
 """
     parse(qasm::String)
 

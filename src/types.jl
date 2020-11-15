@@ -187,6 +187,12 @@ function print_qasm(io::IO, x::MainProgram)
         end
     end
 end
+# nested inst list
+function print_qasm(io::IO, stmts::Vector{Any})
+    for each in stmts
+        print_qasm(io, each)
+    end
+end
 
 function print_qasm(io::IO, stmt::IfStmt)
     print_kw(io, "if ")
