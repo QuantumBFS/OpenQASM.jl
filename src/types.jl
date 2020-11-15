@@ -4,22 +4,24 @@ using RBNF
 using RBNF: Token
 
 export MainProgram, IfStmt, Opaque, Barrier, RegDecl, Include, GateDecl, Gate, Reset, Measure,
-    Instruction, UGate, CXGate, Bit, FnExp, Negative
+    Instruction, UGate, CXGate, Bit, FnExp, Negative, ASTNode
 
-struct MainProgram
+abstract type ASTNode end
+
+struct MainProgram <: ASTNode
     version::VersionNumber
     prog::Vector{Any}
 
     MainProgram(version, prog) = new(version, Vector{Any}(prog))
 end
 
-struct IfStmt
+struct IfStmt <: ASTNode
     left
     right
     body
 end
 
-struct Opaque
+struct Opaque <: ASTNode
     name
     cargs::Vector{Any}
     qargs::Vector{Any}
@@ -29,7 +31,7 @@ struct Opaque
     end
 end
 
-struct Barrier
+struct Barrier <: ASTNode
     qargs::Vector{Any}
 
     function Barrier(qargs)
@@ -37,17 +39,17 @@ struct Barrier
     end
 end
 
-struct RegDecl
+struct RegDecl <: ASTNode
     type
     name
     size
 end
 
-struct Include
+struct Include <: ASTNode
     file
 end
 
-struct GateDecl
+struct GateDecl <: ASTNode
     name
     # we remove type annotations for now
     # due to JuliaLang/julia/issues/38091
@@ -59,21 +61,21 @@ struct GateDecl
     end
 end
 
-struct Gate
+struct Gate <: ASTNode
     decl::GateDecl
     body::Vector{Any}
 end
 
-struct Reset
+struct Reset <: ASTNode
     qarg
 end
 
-struct Measure
+struct Measure <: ASTNode
     qarg
     carg
 end
 
-struct Instruction
+struct Instruction <: ASTNode
     name::String
     cargs::Vector{Any}
     qargs::Vector{Any}
@@ -83,19 +85,19 @@ struct Instruction
     end
 end
 
-struct UGate
+struct UGate <: ASTNode
     z1
     y
     z2
     qarg
 end
 
-struct CXGate
+struct CXGate <: ASTNode
     ctrl
     qarg
 end
 
-struct Bit
+struct Bit <: ASTNode
     name
     address
 end
@@ -106,12 +108,12 @@ end
 
 Bit(name::String) = Bit(Token{:id}(name), nothing)
 
-struct FnExp
+struct FnExp <: ASTNode
     fn::Symbol
     arg
 end
 
-struct Negative
+struct Negative <: ASTNode
     value
 end
 

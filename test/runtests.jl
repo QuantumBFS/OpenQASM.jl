@@ -1,7 +1,9 @@
 using OpenQASM
 using OpenQASM.Types
+using OpenQASM.Tools
 using RBNF: Token
 using Test
+
 
 @testset "qasm parser" begin
 
@@ -217,4 +219,60 @@ using Test
         @test inst.cargs[3].str == "0.3"
     end
 
+end
+
+@testset "is ast similar" begin
+    qasm1 = """OPENQASM 2.0;
+    include "qelib1.inc";
+    gate custom(lambda) a {
+        u1(sin(lambda) + 1) a;
+    }
+    // comment
+    gate g a
+    {
+        U(0,0,0) a;
+    }
+
+    qreg q[4];
+    creg c1[1];
+    creg c2[1];
+    U(-1.0, pi/2+3, 3.0) q[2];
+    CX q[1], q[2];
+    custom(0.3) q[3];
+    barrier q;
+    h q[0];
+    measure q[0] -> c0[0];
+    if(c0==1) z q[2];
+    u3(0.1 + 0.2, 0.2, 0.3) q[0];
+    """
+
+    qasm2 = """OPENQASM 2.0;
+    include "qelib1.inc";
+    gate custom(lambda) a {
+        u1(sin(lambda) + 1) a;
+    }
+    // comment
+    gate g a
+    {
+        U(0,0,0) a;
+    }
+
+    qreg q[4];
+    creg c1[1];
+    creg c2[1];
+    U(-1.0, pi/2+3, 3.0) q[2];
+    CX q[1], q[2];
+    custom(0.3) q[3];
+    barrier q;
+    h q[0];
+    measure q[0] -> c0[0];
+    if(c0==1) z q[2];
+    """
+
+    ast1 = OpenQASM.parse(qasm1)
+    ast2 = OpenQASM.parse(qasm2)
+
+    @test issimilar(ast1, ast2) == false
+    @test issimilar(ast1, ast1)
+    @test issimilar(ast2, ast2)
 end

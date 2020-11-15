@@ -4,8 +4,10 @@ using RBNF
 
 include("types.jl")
 include("parse.jl")
+include("tools.jl")
 
 using .Types: print_qasm
+using .Tools: issimilar
 
 """
     parse(qasm::String)
