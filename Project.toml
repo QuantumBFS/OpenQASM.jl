@@ -1,7 +1,7 @@
 name = "OpenQASM"
 uuid = "a8821629-a4c0-4df7-9e00-12969ff383a7"
 authors = ["Roger-luo <rogerluo.rl18@gmail.com> and contributors"]
-version = "1.0.0"
+version = "2.0.0"
 
 [deps]
 RBNF = "83ef0002-5b9e-11e9-219b-65bac3c6d69c"
