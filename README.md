@@ -18,7 +18,7 @@ OpenQASM is a &nbsp;
 </p>
 
 ```julia
-pkg> add OpenQASM#master
+pkg> add OpenQASM
 ```
 
 ## Usage
