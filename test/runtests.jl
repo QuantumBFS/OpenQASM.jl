@@ -1,6 +1,7 @@
 using OpenQASM
 using OpenQASM.Types
 using OpenQASM.Tools
+using MLStyle
 using RBNF: Token
 using Test
 
@@ -38,15 +39,31 @@ using Test
         @test ast.version == v"2.0.0"
     end
 
+    @test @match ast begin
+        MainProgram(v"2.0.0", progs) => true
+        _ => false
+    end
+
     @testset "include" begin
         @test ast.prog[1] isa Include
         @test ast.prog[1].file isa Token{:str}
         @test ast.prog[1].file.str == "\"qelib1.inc\""
+
+        token = @match ast.prog[1] begin
+            Include(file) => file
+            _ => nothing
+        end
+        @test token.str == "\"qelib1.inc\""
     end
 
     @testset "gate custom(lambda) a" begin
         @test ast.prog[2] isa Gate
         custom = ast.prog[2]
+        
+        @test @match custom begin
+            Gate(GateDecl(name, cargs, qargs), body) => true
+            _ => false
+        end
 
         @test custom.decl.name isa Token{:id}
         @test custom.decl.name.str == "custom"
@@ -276,3 +293,4 @@ end
     @test issimilar(ast1, ast1)
     @test issimilar(ast2, ast2)
 end
+

@@ -1,6 +1,7 @@
 module Types
 
 using RBNF
+using MLStyle
 using RBNF: Token
 
 export MainProgram, IfStmt, Opaque, Barrier, RegDecl, Include, GateDecl, Gate, Reset, Measure,
@@ -344,5 +345,22 @@ function print_qasm(io::IO, stmt::Tuple)
         print(io, ")")
     end
 end
+
+@as_record MainProgram
+@as_record IfStmt
+@as_record Opaque
+@as_record Barrier
+@as_record RegDecl
+@as_record Include
+@as_record GateDecl
+@as_record Gate
+@as_record Reset
+@as_record Measure
+@as_record Instruction
+@as_record UGate
+@as_record CXGate
+@as_record Bit
+@as_record FnExp
+@as_record Negative
 
 end
