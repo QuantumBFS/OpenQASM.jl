@@ -163,7 +163,7 @@ end
 
 # work around JuliaLang/julia/issues/38091
 function _force_any(x)
-    if isnothing(x)
+    if x === nothing
         return Any[]
     else
         return Vector{Any}(x)
@@ -314,7 +314,7 @@ end
 
 function print_qasm(io::IO, stmt::Bit)
     print_qasm(io, stmt.name)
-    if !isnothing(stmt.address)
+    if stmt.address !== nothing
         print(io, "[")
         print_qasm(io, stmt.address)
         print(io, "]")
