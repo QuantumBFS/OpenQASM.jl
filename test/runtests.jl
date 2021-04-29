@@ -5,6 +5,12 @@ using MLStyle
 using RBNF: Token
 using Test
 
+@testset "conversion" begin
+    @test convert(String, Token{:str}("\"abc\"")) == "abc"
+    @test convert(Symbol, Token{:id}("abc")) === :abc
+    @test convert(Float64, Token{:float64}("0.23")) == 0.23
+    @test convert(Int, Token{:int}("1")) == 1
+end
 
 @testset "qasm parser" begin
 
