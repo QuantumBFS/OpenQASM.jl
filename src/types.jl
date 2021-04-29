@@ -175,6 +175,7 @@ end
 function print_qasm(io::IO, x::MainProgram)
     printstyled(io, "OPENQASM "; bold=true)
     printstyled(io, x.version.major, ".", x.version.minor; color=:yellow)
+    print(io, ";")
     println(io)
 
     for k in 1:length(x.prog)

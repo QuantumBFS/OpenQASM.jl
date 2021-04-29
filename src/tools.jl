@@ -1,6 +1,6 @@
 module Tools
 
-export kw_qreg, kw_creg, kw_gate, qasm_id, qasm_int, qasm_f64, qasm_str
+export kw_qreg, kw_creg, kw_gate, qasm_id, qasm_int, qasm_f64, qasm_str, cmp_ast
 
 using ..Types
 using MLStyle
@@ -47,6 +47,15 @@ function cmp_ast(lhs::Instruction, rhs::Instruction)
     all(map(cmp_exp, lhs.cargs, rhs.cargs)) || return false
     return cmp_ast(lhs.qargs, rhs.qargs)
 end
+
+function cmp_ast(lhs::UGate, rhs::UGate)
+    cmp_exp(lhs.y, rhs.y) || return false
+    cmp_exp(lhs.z1, rhs.z1) || return false
+    cmp_exp(lhs.z2, rhs.z2) || return false
+    return true
+end
+
+cmp_ast(lhs::Neg, rhs::Neg) = cmp_exp(lhs.val, rhs.val)
 
 function cmp_exp(lhs::Tuple, rhs::Tuple)
     length(lhs) == length(rhs) || return false
