@@ -5,7 +5,7 @@ using MLStyle
 using RBNF: Token
 
 export MainProgram, IfStmt, Opaque, Barrier, RegDecl, Include, GateDecl, Gate, Reset, Measure,
-    Instruction, UGate, CXGate, Bit, FnExp, Negative, ASTNode
+    Instruction, UGate, CXGate, Bit, Call, Neg, Add, Sub, Mul, Div, ASTNode
 
 abstract type ASTNode end
 
@@ -109,14 +109,17 @@ end
 
 Bit(name::String) = Bit(Token{:id}(name), nothing)
 
-struct FnExp <: ASTNode
-    fn::Symbol
-    arg
+struct Call <: ASTNode
+    name::Symbol
+    args
 end
 
-struct Negative <: ASTNode
-    value
+struct Neg <: ASTNode
+    val
 end
+
+@deprecate Negative(val) Neg(val)
+@deprecate FnExp(fn, arg) Call(fn, arg)
 
 Base.show(io::IO, x::MainProgram) = print_qasm(io, x)
 Base.show(io::IO, x::Gate) = print_qasm(io, x)
@@ -321,16 +324,18 @@ function print_qasm(io::IO, stmt::Bit)
     end
 end
 
-function print_qasm(io::IO, stmt::FnExp)
-    print_kw(io, stmt.fn)
+function print_qasm(io::IO, stmt::Call)
+    print_kw(io, stmt.name)
     print(io, "(")
-    print_qasm(io, stmt.arg)
+    print_qasm(io, stmt.args)
     print(io, ")")
 end
 
-function print_qasm(io::IO, stmt::Negative)
+function print_qasm(io::IO, stmt::Neg)
     print(io, "-")
-    print_qasm(io, stmt.value)
+    print(io, "(")
+    print_qasm(io, stmt.val)
+    print(io, ")")
 end
 
 # exp
@@ -360,7 +365,7 @@ end
 @as_record UGate
 @as_record CXGate
 @as_record Bit
-@as_record FnExp
-@as_record Negative
+@as_record Call
+@as_record Neg
 
 end

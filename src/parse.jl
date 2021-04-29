@@ -74,15 +74,23 @@ RBNF.@parser QASMLang begin
         prefix = [recur..., (',', exp) % second]
     end
 
-    item = (float64 | int | :pi | id | fnexp) | (['(', exp, ')'] % second) | neg
-    fnexp::FnExp := [fn = fn, '(', arg = exp, ')']
-    neg::Negative := ['-', value = exp]
+    con = (float64 | int | :pi | id | call)
+    num = (['(', exp, ')'] % second) | neg | con
+    add = ( :+ | :- )
+    mul = ( :* | :/ )
     exp = @direct_recur begin
-        init = item
-        prefix = (recur, binop, item)
+        init = term
+        prefix = (recur, add, term)
     end
+    term = @direct_recur begin
+        init = num
+        prefix = (recur, mul, term)
+    end
+    # term = (add | sub | num)
+    neg::Neg := [:-, val = num]
+    call::Call := [name=fn, "(", args = exp, ")"]    
     fn = (:sin | :cos | :tan | :exp | :ln | :sqrt)
-    binop = (:+ | :- | :* | :/)
+    # binop = (:+ | :- | :* | :/)
 
     # define tokens
     @token

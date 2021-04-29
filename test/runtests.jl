@@ -85,11 +85,11 @@ using Test
         carg = inst.cargs[1]
         qarg = inst.qargs[1]
         @test length(carg) == 3
-        @test carg[1] isa FnExp
+        @test carg[1] isa Call
         @test carg[2] isa Token{:reserved}
         @test carg[3] isa Token{:int}
-        @test carg[1].fn === :sin
-        @test carg[1].arg.str == "lambda"
+        @test carg[1].name === :sin
+        @test carg[1].args.str == "lambda"
         @test carg[2].str == "+"
         @test carg[3].str == "1"
         @test qarg.name.str == "a"
@@ -145,7 +145,7 @@ using Test
         U = ast.prog[7]
         @test U.qarg isa Bit
         @test U.y isa Tuple
-        @test U.z1 isa Negative
+        @test U.z1 isa Neg
         @test U.z2 isa Token{:float64}
         @test U.qarg.name.str == "q"
         @test U.qarg.address.str == "2"
