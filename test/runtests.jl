@@ -33,6 +33,7 @@ using Test
     """
 
     ast = OpenQASM.parse(qasm)
+    println(ast)
 
     @testset "mainprogram" begin
         @test ast isa MainProgram
@@ -288,12 +289,14 @@ end
 
     ast1 = OpenQASM.parse(qasm1)
     ast2 = OpenQASM.parse(qasm2)
+    println(ast1)
+    println(ast2)
 
     @test !(ast1 ≈ ast2)
     @test ast1 ≈ ast1
     @test ast2 ≈ ast2
 
-    s = """OPENQASM 2.0;
+    s = """
     gate test_gate(theta, phi) qreg_2, qreg_3, qreg_1 {
     x qreg_1;
     z qreg_2;
@@ -304,6 +307,7 @@ end
     CX qreg_1, qreg_3;
     }
     """
-    ast3 = OpenQASM.parse(s).prog[1]
+    ast3 = OpenQASM.parse_gate(s)
+    println(ast3)
     @test ast3 ≈ ast3
 end
