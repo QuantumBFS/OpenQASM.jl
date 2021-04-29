@@ -24,9 +24,6 @@ Base.convert(::Type{Symbol}, t::Token{:id}) = Symbol(t.str)
 Base.convert(::Type{Symbol}, t::Token{:reserved}) = Symbol(t.str)
 Base.convert(::Type{String}, t::Token{:str}) = String(t.str[2:end-1])
 
-
-RBNF.typename(::Type{QASMLang}, name::Symbol) = Symbol(:S_, name)
-
 RBNF.@parser QASMLang begin
     # define ignorances
     ignore{space, comment}
