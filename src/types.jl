@@ -121,8 +121,7 @@ end
 @deprecate Negative(val) Neg(val)
 @deprecate FnExp(fn, arg) Call(fn, arg)
 
-Base.show(io::IO, x::MainProgram) = print_qasm(io, x)
-Base.show(io::IO, x::Gate) = print_qasm(io, x)
+Base.show(io::IO, x::ASTNode) = print_qasm(io, x)
 
 print_kw(io::IO, xs...) = printstyled(io, xs...; color=:light_blue)
 

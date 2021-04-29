@@ -289,8 +289,21 @@ end
     ast1 = OpenQASM.parse(qasm1)
     ast2 = OpenQASM.parse(qasm2)
 
-    @test issimilar(ast1, ast2) == false
-    @test issimilar(ast1, ast1)
-    @test issimilar(ast2, ast2)
-end
+    @test !(ast1 ≈ ast2)
+    @test ast1 ≈ ast1
+    @test ast2 ≈ ast2
 
+    s = """OPENQASM 2.0;
+    gate test_gate(theta, phi) qreg_2, qreg_3, qreg_1 {
+    x qreg_1;
+    z qreg_2;
+    rx(-(sin(theta))+2.0) qreg_3;
+    rx(sin(theta)+tan(phi)) qreg_3;
+    ry(cos(phi)-ln(phi)) qreg_3;
+    ry(cos(phi)*sqrt(phi)) qreg_3;
+    CX qreg_1, qreg_3;
+    }
+    """
+    ast3 = OpenQASM.parse(s).prog[1]
+    @test ast3 ≈ ast3
+end
