@@ -12,6 +12,14 @@ using Test
     @test convert(Int, Token{:int}("1")) == 1
 end
 
+@testset "qasm token helper" begin
+    @test qasm_id("abc") ≈ Token{:id}("abc")
+    @test qasm_id(:abc) ≈ Token{:id}("abc")
+    @test qasm_int(2) ≈ Token{:int}("2")
+    @test qasm_f64(2.3) ≈ Token{:float64}("2.3")
+    @test qasm_str("abc") ≈ Token{:str}("\"abc\"")        
+end
+
 @testset "qasm parser" begin
 
     qasm = """OPENQASM 2.0;
