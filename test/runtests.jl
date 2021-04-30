@@ -20,6 +20,16 @@ end
     @test qasm_str("abc") ≈ Token{:str}("\"abc\"")        
 end
 
+@testset "Bit(::String[, addrs])" begin
+    bit = Bit("qreg")
+    @test bit.name == qasm_id("qreg")
+    @test bit.address === nothing
+
+    @test bit = Bit("qreg", 2)
+    @test bit.name == qasm_id("qreg")
+    @test bit.address == qasm_int(2)
+end
+
 @testset "qasm parser" begin
 
     qasm = """OPENQASM 2.0;
