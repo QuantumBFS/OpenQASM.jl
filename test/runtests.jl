@@ -263,7 +263,7 @@ end
 
 end
 
-@testset "is ast similar" begin
+@testset "cmp_ast" begin
     qasm1 = """OPENQASM 2.0;
     include "qelib1.inc";
     gate custom(lambda) a {
