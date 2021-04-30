@@ -7,6 +7,7 @@ using Test
 
 @testset "cmp_exp" begin
     @test cmp_exp(Neg(qasm_f64(0.2)), qasm_f64(-0.2))
+    @test cmp_exp(qasm_f64(-0.2), Neg(qasm_f64(0.2)))
 end
 
 @testset "conversion" begin

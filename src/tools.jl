@@ -64,7 +64,7 @@ end
 
 function cmp_exp(lhs, rhs)
     @switch (lhs, rhs) begin
-        @case (Neg(a::Token{:float64}), b::Token{:float64})
+        @case (Neg(a::Token{:float64}), b::Token{:float64}) || (b::Token{:float64}, Neg(a::Token{:float64}))
             startswith(b.str, '-') && a.str == b.str[2:end]
         @case _
             cmp_ast(lhs, rhs)
