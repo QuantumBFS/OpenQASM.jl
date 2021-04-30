@@ -1,6 +1,6 @@
 module Tools
 
-export kw_qreg, kw_creg, kw_gate, qasm_id, qasm_int, qasm_f64, qasm_str, cmp_ast
+export kw_qreg, kw_creg, kw_gate, qasm_id, qasm_int, qasm_f64, qasm_str, cmp_ast, cmp_exp
 
 using ..Types
 using MLStyle
@@ -62,7 +62,15 @@ function cmp_exp(lhs::Tuple, rhs::Tuple)
     return all(map(cmp_ast, lhs, rhs))
 end
 
-cmp_exp(lhs, rhs) = cmp_ast(lhs, rhs)
+function cmp_exp(lhs, rhs)
+    @switch (lhs, rhs) begin
+        @case (Neg(a::Token{:float64}), b::Token{:float64})
+            startswith(b.str, '-') && a.str == b.str[2:end]
+        @case _
+            cmp_ast(lhs, rhs)
+    end
+end
+
 cmp_ast(lhs, rhs) = lhs == rhs
 
 @deprecate issimilar(x, y) cmp_ast(x, y)
