@@ -25,7 +25,7 @@ end
     @test bit.name == qasm_id("qreg")
     @test bit.address === nothing
 
-    @test bit = Bit("qreg", 2)
+    bit = Bit("qreg", 2)
     @test bit.name == qasm_id("qreg")
     @test bit.address == qasm_int(2)
 end
