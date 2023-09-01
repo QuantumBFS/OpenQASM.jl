@@ -59,6 +59,7 @@ end
     measure q[0] -> c0[0];
     if(c0==1) z q[2];
     u3(0.1 + 0.2, 0.2, 0.3) q[0];
+    reset q[0];
     """
 
     ast = OpenQASM.parse(qasm)
@@ -264,6 +265,14 @@ end
         @test inst.cargs[1][3].str == "0.2"
         @test inst.cargs[2].str == "0.2"
         @test inst.cargs[3].str == "0.3"
+    end
+
+    @testset "reset" begin
+      reset = ast.prog[15]
+      @test reset isa  Reset
+      @test reset.qarg.name.str == "q"
+      @test reset.qarg.address.str == "0"
+      @test string(reset) == "reset q[0];"
     end
 
 end
