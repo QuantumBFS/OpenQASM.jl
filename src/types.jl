@@ -271,6 +271,7 @@ end
 function print_qasm(io::IO, stmt::Reset)
     print_kw(io, "reset ")
     print_qasm(io, stmt.qarg)
+    print(io, ";")
 end
 
 function print_qasm(io::IO, stmt::Measure)
