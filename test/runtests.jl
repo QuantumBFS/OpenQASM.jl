@@ -60,6 +60,7 @@ end
     if(c0==1) z q[2];
     u3(0.1 + 0.2, 0.2, 0.3) q[0];
     reset q[0];
+    CZ q[1], q[2];
     """
 
     ast = OpenQASM.parse(qasm)
@@ -273,6 +274,18 @@ end
       @test reset.qarg.name.str == "q"
       @test reset.qarg.address.str == "0"
       @test string(reset) == "reset q[0];"
+    end
+
+
+    @testset "CZ" begin
+        @test ast.prog[16] isa CZGate
+        cx = ast.prog[16]
+        @test cx.ctrl isa Bit
+        @test cx.qarg isa Bit
+        @test cx.ctrl.name.str == "q"
+        @test cx.qarg.name.str == "q"
+        @test cx.ctrl.address.str == "1"
+        @test cx.qarg.address.str == "2"
     end
 
 end

@@ -5,7 +5,7 @@ using MLStyle
 using RBNF: Token
 
 export MainProgram, IfStmt, Opaque, Barrier, RegDecl, Include, GateDecl, Gate, Reset, Measure,
-    Instruction, UGate, CXGate, Bit, Call, Neg, Add, Sub, Mul, Div, ASTNode
+    Instruction, UGate, CXGate, CZGate, Bit, Call, Neg, Add, Sub, Mul, Div, ASTNode
 
 abstract type ASTNode end
 
@@ -94,6 +94,12 @@ struct UGate <: ASTNode
 end
 
 struct CXGate <: ASTNode
+    ctrl
+    qarg
+end
+
+
+struct CZGate <: ASTNode
     ctrl
     qarg
 end
@@ -316,6 +322,15 @@ function print_qasm(io::IO, stmt::CXGate)
     print(io, ";")
 end
 
+
+function print_qasm(io::IO, stmt::CZGate)
+    print_kw(io, "CZ ")
+    print_qasm(io, stmt.ctrl)
+    print(io, ", ")
+    print_qasm(io, stmt.qarg)
+    print(io, ";")
+end
+
 function print_qasm(io::IO, stmt::Bit)
     print_qasm(io, stmt.name)
     if stmt.address !== nothing
@@ -365,6 +380,7 @@ end
 @as_record Instruction
 @as_record UGate
 @as_record CXGate
+@as_record CZGate
 @as_record Bit
 @as_record Call
 @as_record Neg

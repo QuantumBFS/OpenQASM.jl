@@ -50,9 +50,10 @@ RBNF.@parser QASMLang begin
     reset::Reset := [:reset, qarg = bit, ';']
     measure::Measure := [:measure, qarg = bit, :(->), carg = bit, ';']
 
-    uop = (inst | ugate | csemantic_gate)
+    uop = (inst | ugate | csemantic_gate | czsemantic_gate)
     inst::Instruction := [name = id, ['(', [cargs = explist].?, ')'].?, qargs = bitlist, ';']
     ugate::UGate := [:U, '(', z1 = exp, ',', y = exp, ',', z2 = exp, ')', qarg = bit, ';']
+    czsemantic_gate::CZGate := [:CZ | :cz, ctrl = bit, ',', qarg = bit, ';']
     csemantic_gate::CXGate := [:CX | :cx, ctrl = bit, ',', qarg = bit, ';']
 
     idlist = @direct_recur begin
