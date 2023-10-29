@@ -1,6 +1,6 @@
 # OpenQASM
 
-[![tests](https://github.com/QuantumBFS/OpenQASM.jl/workflows/tests/badge.svg)](https://github.com/QuantumBFS/OpenQASM.jl/actions)
+[![CI](https://github.com/QuantumBFS/OpenQASM.jl/actions/workflows/ci.yml/badge.svg)](https://github.com/QuantumBFS/OpenQASM.jl/actions/workflows/ci.yml)
 [![Coverage](https://codecov.io/gh/QuantumBFS/OpenQASM.jl/branch/master/graph/badge.svg)](https://codecov.io/gh/QuantumBFS/OpenQASM.jl)
 
 Tools for parsing OpenQASM.
