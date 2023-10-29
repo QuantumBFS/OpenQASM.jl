@@ -53,7 +53,7 @@ RBNF.@parser QASMLang begin
     uop = (inst | ugate | csemantic_gate)
     inst::Instruction := [name = id, ['(', [cargs = explist].?, ')'].?, qargs = bitlist, ';']
     ugate::UGate := [:U, '(', z1 = exp, ',', y = exp, ',', z2 = exp, ')', qarg = bit, ';']
-    csemantic_gate::CXGate := [:CXGate, ctrl = bit, ',', qarg = bit, ';']
+    csemantic_gate::CXGate := [:CX, ctrl = bit, ',', qarg = bit, ';']
 
     idlist = @direct_recur begin
         init = [id]
