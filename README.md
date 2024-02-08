@@ -1,6 +1,6 @@
 # OpenQASM
 
-[![tests](https://github.com/QuantumBFS/OpenQASM.jl/workflows/tests/badge.svg)](https://github.com/QuantumBFS/OpenQASM.jl/actions)
+[![CI](https://github.com/QuantumBFS/OpenQASM.jl/actions/workflows/ci.yml/badge.svg)](https://github.com/QuantumBFS/OpenQASM.jl/actions/workflows/ci.yml)
 [![Coverage](https://codecov.io/gh/QuantumBFS/OpenQASM.jl/branch/master/graph/badge.svg)](https://codecov.io/gh/QuantumBFS/OpenQASM.jl)
 
 Tools for parsing OpenQASM.
@@ -34,6 +34,26 @@ its AST according to its BNF specification described in [OpenQASM 2.0](https://g
 
 - [x] support for QASM 2.0
 - [ ] support for QASM 3.0
+
+## Cite Us
+
+If you use OpenQASM.jl in your research, please cite our paper:
+
+```bibtex
+@article{Luo2020yaojlextensible,
+  doi = {10.22331/q-2020-10-11-341},
+  url = {https://doi.org/10.22331/q-2020-10-11-341},
+  title = {Yao.jl: {E}xtensible, {E}fficient {F}ramework for {Q}uantum {A}lgorithm {D}esign},
+  author = {Luo, Xiu-Zhe and Liu, Jin-Guo and Zhang, Pan and Wang, Lei},
+  journal = {{Quantum}},
+  issn = {2521-327X},
+  publisher = {{Verein zur F{\"{o}}rderung des Open Access Publizierens in den Quantenwissenschaften}},
+  volume = {4},
+  pages = {341},
+  month = oct,
+  year = {2020}
+}
+```
 
 ## License
 
