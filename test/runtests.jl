@@ -52,7 +52,7 @@ end
     creg c1[1];
     creg c2[1];
     U(-1.0, pi/2+3, 3.0) q[2];
-    CX q[1], q[2];
+    cx q[1], q[2];
     custom(0.3) q[3];
     barrier q;
     h q[0];
