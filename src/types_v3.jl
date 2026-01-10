@@ -11,7 +11,7 @@ import ..Types: print_qasm
 export IntType, UIntType, FloatType, BitType, AngleType,
     ClassicalDecl, QubitDecl,
     IfElseStmt, WhileStmt, ForStmt, BreakStmt, ContinueStmt,
-    ModifiedGate, GateModifier,
+    ModifiedGate, GateModifier, PowModifierParsed,
     InputDecl, OutputDecl,
     RangeExpr, DiscreteSet
 
@@ -70,10 +70,16 @@ Helper function to normalize block_or_stmt results.
 Handles both blocks ('{', statements, '}') and single statements.
 """
 function normalize_block(body)
-    if body isa Tuple && length(body) == 3 && body[1] == '{'
-        # It's a block: ('{', statements, '}'), extract the middle
-        return Vector{Any}(body[2])
-    elseif body isa AbstractVector
+    if body isa Tuple && length(body) == 3
+        # Check if first element is a '{' token
+        first_elem = body[1]
+        is_brace = (first_elem isa Token && first_elem.str == "{") || first_elem == '{'
+        if is_brace
+            # It's a block: ('{', statements, '}'), extract the middle
+            return Vector{Any}(body[2])
+        end
+    end
+    if body isa AbstractVector
         # Already a vector
         return Vector{Any}(body)
     else
@@ -117,6 +123,11 @@ struct RangeExpr <: ASTNode
     start
     step::Union{Any,Nothing}  # Optional step
     stop
+
+    # Constructor for range without step: [start:stop]
+    RangeExpr(start, stop) = new(start, nothing, stop)
+    # Constructor for range with step: [start:step:stop]
+    RangeExpr(start, step, stop) = new(start, step, stop)
 end
 
 struct DiscreteSet <: ASTNode
@@ -140,6 +151,14 @@ struct GateModifier
     GateModifier(type::Symbol) = new(type, nothing)
     GateModifier(type::Symbol, param) = new(type, param)
 end
+
+# Helper struct for parsing pow modifiers
+struct PowModifierParsed
+    param
+end
+
+# Conversion from parsed pow modifier to GateModifier
+Base.convert(::Type{GateModifier}, p::PowModifierParsed) = GateModifier(:pow, p.param)
 
 struct ModifiedGate <: ASTNode
     modifiers::Vector{GateModifier}

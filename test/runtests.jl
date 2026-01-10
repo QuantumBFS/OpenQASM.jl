@@ -484,61 +484,59 @@ end
 #     @test length(while_stmt.body) > 0
 # end
 
-# TODO: Implement for loops properly
-# @testset "QASM 3.0 for loops" begin
-#     qasm_range = """
-#     OPENQASM 3.0;
-#     for int i in [0:10] {
-#         bit b;
-#     }
-#     """
-#
-#     ast = OpenQASM.parse(qasm_range)
-#     @test ast.prog[1] isa ForStmt
-#     @test ast.prog[1].range isa RangeExpr
-#
-#     qasm_set = """
-#     OPENQASM 3.0;
-#     for int i in {1, 5, 10} {
-#         bit b;
-#     }
-#     """
-#
-#     ast2 = OpenQASM.parse(qasm_set)
-#     @test ast2.prog[1] isa ForStmt
-#     @test ast2.prog[1].range isa DiscreteSet
-# end
+@testset "QASM 3.0 for loops" begin
+    qasm_range = """
+    OPENQASM 3.0;
+    for int i in [0:10] {
+        bit b;
+    }
+    """
 
-# TODO: Implement gate modifiers parsing
-# @testset "QASM 3.0 gate modifiers" begin
-#     qasm = """
-#     OPENQASM 3.0;
-#     include "stdgates.inc";
-#     qubit[2] q;
-#     inv @ h q[0];
-#     ctrl @ x q[0], q[1];
-#     pow(2) @ s q[0];
-#     """
-#
-#     ast = OpenQASM.parse(qasm)
-#
-#     # inv @ h q[0]
-#     @test ast.prog[3] isa ModifiedGate
-#     inv_gate = ast.prog[3]
-#     @test length(inv_gate.modifiers) >= 1
-#     @test inv_gate.modifiers[1].type == :inv
-#
-#     # ctrl @ x q[0], q[1]
-#     @test ast.prog[4] isa ModifiedGate
-#     ctrl_gate = ast.prog[4]
-#     @test ctrl_gate.modifiers[1].type == :ctrl
-#
-#     # pow(2) @ s q[0]
-#     @test ast.prog[5] isa ModifiedGate
-#     pow_gate = ast.prog[5]
-#     @test pow_gate.modifiers[1].type == :pow
-#     @test pow_gate.modifiers[1].param !== nothing
-# end
+    ast = OpenQASM.parse(qasm_range)
+    @test ast.prog[1] isa ForStmt
+    @test ast.prog[1].range isa RangeExpr
+
+    qasm_set = """
+    OPENQASM 3.0;
+    for int i in {1, 5, 10} {
+        bit b;
+    }
+    """
+
+    ast2 = OpenQASM.parse(qasm_set)
+    @test ast2.prog[1] isa ForStmt
+    @test ast2.prog[1].range isa DiscreteSet
+end
+
+@testset "QASM 3.0 gate modifiers" begin
+    qasm = """
+    OPENQASM 3.0;
+    include "stdgates.inc";
+    qubit[2] q;
+    inv @ h q[0];
+    ctrl @ x q[0], q[1];
+    pow(2) @ s q[0];
+    """
+
+    ast = OpenQASM.parse(qasm)
+
+    # inv @ h q[0]
+    @test ast.prog[3] isa ModifiedGate
+    inv_gate = ast.prog[3]
+    @test length(inv_gate.modifiers) >= 1
+    @test inv_gate.modifiers[1].type == :inv
+
+    # ctrl @ x q[0], q[1]
+    @test ast.prog[4] isa ModifiedGate
+    ctrl_gate = ast.prog[4]
+    @test ctrl_gate.modifiers[1].type == :ctrl
+
+    # pow(2) @ s q[0]
+    @test ast.prog[5] isa ModifiedGate
+    pow_gate = ast.prog[5]
+    @test pow_gate.modifiers[1].type == :pow
+    @test pow_gate.modifiers[1].param !== nothing
+end
 
 # TODO: Fix expression handling in gate calls with input parameters
 # @testset "QASM 3.0 input/output parameters" begin
@@ -601,68 +599,66 @@ end
     @test ast.prog[3].initializer !== nothing
 end
 
-# TODO: Complete example requires gate modifiers and complex expressions
-# @testset "QASM 3.0 complete example" begin
-#     qasm = """
-#     OPENQASM 3.0;
-#     include "stdgates.inc";
-#
-#     input float[64] theta;
-#     qubit[2] q;
-#     bit[2] c;
-#
-#     reset q[0];
-#     reset q[1];
-#
-#     ry(theta) q[0];
-#     ctrl @ x q[0], q[1];
-#
-#     measure q -> c;
-#
-#     if (c[0] == 1) {
-#         x q[0];
-#     }
-#
-#     output bit[2] c;
-#     """
-#
-#     @test_nowarn OpenQASM.parse(qasm)
-#     ast = OpenQASM.parse(qasm)
-#     @test ast.version == v"3.0.0"
-#     @test ast isa MainProgram
-# end
+@testset "QASM 3.0 complete example" begin
+    qasm = """
+    OPENQASM 3.0;
+    include "stdgates.inc";
 
-# TODO: break/continue require for loops which aren't implemented
-# @testset "QASM 3.0 break/continue" begin
-#     qasm = """
-#     OPENQASM 3.0;
-#     for int i in [0:10] {
-#         if (i == 5) {
-#             break;
-#         }
-#         if (i == 3) {
-#             continue;
-#         }
-#     }
-#     """
-#
-#     ast = OpenQASM.parse(qasm)
-#     for_stmt = ast.prog[1]
-#     @test for_stmt isa ForStmt
-#
-#     # Find break and continue in the body
-#     has_break = false
-#     has_continue = false
-#     for stmt in for_stmt.body
-#         if stmt isa IfElseStmt
-#             for s in stmt.if_body
-#                 if s isa BreakStmt
-#                     has_break = true
-#                 elseif s isa ContinueStmt
-#                     has_continue = true
-#                 end
-#             end
-#         end
-#     end
-#     @test has_break || has_continue  # At least one should be found
-# end
+    input float[64] theta;
+    qubit[2] q;
+    bit[2] c;
+
+    reset q[0];
+    reset q[1];
+
+    ry(theta) q[0];
+    ctrl @ x q[0], q[1];
+
+    measure q -> c;
+
+    if (c[0] == 1) {
+        x q[0];
+    }
+
+    output bit[2] c;
+    """
+
+    @test_nowarn OpenQASM.parse(qasm)
+    ast = OpenQASM.parse(qasm)
+    @test ast.version == v"3.0.0"
+    @test ast isa MainProgram
+end
+
+@testset "QASM 3.0 break/continue" begin
+    qasm = """
+    OPENQASM 3.0;
+    for int i in [0:10] {
+        if (i == 5) {
+            break;
+        }
+        if (i == 3) {
+            continue;
+        }
+    }
+    """
+
+    ast = OpenQASM.parse(qasm)
+    for_stmt = ast.prog[1]
+    @test for_stmt isa ForStmt
+
+    # Find break and continue in the body
+    has_break = false
+    has_continue = false
+    for stmt in for_stmt.body
+        if stmt isa IfElseStmt
+            for s in stmt.if_body
+                if s isa BreakStmt
+                    has_break = true
+                elseif s isa ContinueStmt
+                    has_continue = true
+                end
+            end
+        end
+    end
+    @test has_break || has_continue  # At least one should be found
+end

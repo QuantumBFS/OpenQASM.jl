@@ -27,6 +27,8 @@ RBNF.crate(::Type{TypesV3.FloatType}) = TypesV3.FloatType()
 RBNF.crate(::Type{TypesV3.BitType}) = TypesV3.BitType()
 RBNF.crate(::Type{TypesV3.AngleType}) = TypesV3.AngleType()
 RBNF.crate(::Type{TypesV3.GateModifier}) = TypesV3.GateModifier(:inv)
+RBNF.crate(::Type{TypesV3.PowModifierParsed}) = TypesV3.PowModifierParsed(0)
+RBNF.crate(::Type{TypesV3.RangeExpr}) = TypesV3.RangeExpr(0, 0)
 
 RBNF.@parser QASM3Lang begin
     # Define ignorances
@@ -89,7 +91,7 @@ RBNF.@parser QASM3Lang begin
 
     for_stmt::ForStmt := [
         :for,
-        [type = qasm_type].?,
+        type = qasm_type,
         iterator = id,
         :in,
         range = range_or_set,
@@ -98,12 +100,12 @@ RBNF.@parser QASM3Lang begin
 
     range_or_set = (range_expr | discrete_set)
 
-    range_expr::RangeExpr := [
-        '[',
-        start = expr,
-        [[':', step = expr].?, ':', stop = expr].?,
-        ']'
-    ]
+    # Range with step: [start:step:stop]
+    range_with_step::RangeExpr := ['[', start = expr, ':', step = expr, ':', stop = expr, ']']
+    # Range without step: [start:stop]
+    range_without_step::RangeExpr := ['[', start = expr, ':', stop = expr, ']']
+
+    range_expr = range_with_step | range_without_step
 
     discrete_set::DiscreteSet := ['{', elements = expr_list, '}']
 
@@ -136,7 +138,7 @@ RBNF.@parser QASM3Lang begin
     inv_modifier = :inv => GateModifier(:inv)
     ctrl_modifier = :ctrl => GateModifier(:ctrl)
     negctrl_modifier = :negctrl => GateModifier(:negctrl)
-    pow_modifier::GateModifier := [:pow, '(', param = expr, ')']
+    pow_modifier::PowModifierParsed := [:pow, '(', param = expr, ')']
 
     # Simple gate calls (unmodified)
     simple_gate_call = (inst | ugate | csemantic_gate | barrier | opaque)
@@ -215,7 +217,8 @@ RBNF.@parser QASM3Lang begin
     mul = (:* | :/)
 
     # Base case for expressions - similar to QASM 2.0
-    con = (float64 | int | :pi | :PI | :π | :tau | :ℇ | :e | id | call | bit)
+    # Note: bit must come before id since bit includes id with optional array indexing
+    con = (float64 | int | :pi | :PI | :π | :tau | :ℇ | :e | call | bit | id)
     num = (['(', expr, ')'] % second) | neg | con
 
     term = @direct_recur begin
@@ -231,8 +234,8 @@ RBNF.@parser QASM3Lang begin
 
     # Expression list for QASM 3.0 (uses enhanced expr instead of exp)
     expr_list = @direct_recur begin
-        init = expr
-        prefix = (recur, ',', expr)
+        init = [expr]
+        prefix = [recur..., (',', expr) % second]
     end
 
     # Define tokens using shared patterns
