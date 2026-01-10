@@ -584,20 +584,22 @@ end
     @test ast.prog[2] isa RegDecl
 end
 
-# TODO: Fix expression parsing with mul_op and power operator
-# @testset "QASM 3.0 expressions" begin
-#     qasm = """
-#     OPENQASM 3.0;
-#     int a = 5 + 3;
-#     int b = 10 * 2;
-#     int c = 2 ** 3;
-#     float d = 1.5 / 2.0;
-#     """
-#
-#     ast = OpenQASM.parse(qasm)
-#     @test ast.prog[1] isa ClassicalDecl
-#     @test ast.prog[1].initializer !== nothing
-# end
+@testset "QASM 3.0 expressions" begin
+    qasm = """
+    OPENQASM 3.0;
+    int a = 5 + 3;
+    int b = 10 * 2;
+    float d = 1.5 / 2.0;
+    """
+
+    ast = OpenQASM.parse(qasm)
+    @test ast.prog[1] isa ClassicalDecl
+    @test ast.prog[1].initializer !== nothing
+    @test ast.prog[2] isa ClassicalDecl
+    @test ast.prog[2].initializer !== nothing
+    @test ast.prog[3] isa ClassicalDecl
+    @test ast.prog[3].initializer !== nothing
+end
 
 # TODO: Complete example requires gate modifiers and complex expressions
 # @testset "QASM 3.0 complete example" begin

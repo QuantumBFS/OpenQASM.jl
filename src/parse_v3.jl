@@ -206,40 +206,26 @@ RBNF.@parser QASM3Lang begin
         '<' | '>'
     )
 
+    add = (:+ | :-)
+
     arith_expr = @direct_recur begin
         init = term
-        prefix = (recur, add_op, term)
+        prefix = (recur, add, term)
     end
+    mul = (:* | :/)
 
-    add_op = (:+ | :-)
+    # Base case for expressions - similar to QASM 2.0
+    con = (float64 | int | :pi | :PI | :π | :tau | :ℇ | :e | id | call | bit)
+    num = (['(', expr, ')'] % second) | neg | con
 
     term = @direct_recur begin
-        init = power
-        prefix = (recur, mul_op, term)  # Right-recursive like QASM 2.0
+        init = num
+        prefix = (recur, mul, term)
     end
-
-    mul_op = (:* | :/ | :%)
-
-    # Power operator - match as sequence since lexer splits multi-char operators
-    power = @direct_recur begin
-        init = factor
-        prefix = (recur, '*', '*', power)  # Right-recursive
-    end
-
-    factor = (
-        ['(', expr, ')'] |
-        call |
-        neg |
-        num |
-        con |
-        bit
-    )
 
     # QASM 3.0 specific: enhanced function calls and factors
     call::Call := [name = id, '(', args = expr, ')']
-    neg::Neg := ['-', val = factor]
-    num = (float64 | int)
-    con = (:pi | :PI | :π | :tau | :ℇ | :e)
+    neg::Neg := ['-', val = num]
 
     # ========== Lists ==========
 
