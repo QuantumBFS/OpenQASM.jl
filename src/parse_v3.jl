@@ -5,10 +5,9 @@ using RBNF: Token
 
 using ..Types
 using ..TypesV3
-using ..QASMCommon
 
-# Import shared utilities
-using ..QASMCommon: second
+# Import shared utilities from parent module
+import ..second
 
 struct QASM3Lang end
 
