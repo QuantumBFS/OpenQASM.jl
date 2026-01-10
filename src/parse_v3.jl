@@ -139,16 +139,17 @@ RBNF.@parser QASM3Lang begin
     pow_modifier::GateModifier := [:pow, '(', param = expr, ')']
 
     # Simple gate calls (unmodified)
-    simple_gate_call = (inst | ugate | barrier | opaque)
+    simple_gate_call = (inst | ugate | csemantic_gate | barrier | opaque)
 
     # ========== Quantum Operations ==========
 
     quantum_stmt = (measure | reset | barrier)
 
     # Basic quantum operations (inst and ugate are QASM 3.0 specific due to enhanced expressions)
-    uop = (ugate | inst | barrier)
+    uop = (ugate | inst | csemantic_gate | barrier)
     inst::Instruction := [name = id, ['(', [cargs = expr_list].?, ')'].?, qargs = bitlist, ';']
     ugate::UGate := ['U', '(', z1 = expr, ',', y = expr, ',', z2 = expr, ')', qarg = bit, ';']
+    csemantic_gate::CXGate := [:CX, ctrl = bit, ',', qarg = bit, ';']  # QASM 2.0 compatibility
 
     # Shared quantum operations (defined inline - RBNF doesn't support function interpolation in @grammar)
     measure::Measure := [:measure, qarg = bit, :(->), carg = bit, ';']
