@@ -5,7 +5,8 @@ using RBNF
 # Include modules in dependency order
 include("types.jl")          # Base AST types for QASM 2.0
 include("types_v3.jl")       # AST types for QASM 3.0
-include("qasm_common.jl")    # Shared utilities and type conversions
+include("token_wrappers.jl") # Token wrapper types to avoid type piracy
+include("qasm_common.jl")    # Shared utilities
 include("parse.jl")          # QASM 2.0 parser
 include("parse_v3.jl")       # QASM 3.0 parser
 include("tools.jl")          # Utilities
