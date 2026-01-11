@@ -5,7 +5,7 @@ using MLStyle
 using RBNF: Token
 
 export MainProgram, IfStmt, Opaque, Barrier, RegDecl, Include, GateDecl, Gate, Reset, Measure,
-    Instruction, UGate, CXGate, Bit, Call, Neg, Add, Sub, Mul, Div, ASTNode
+    Instruction, UGate, CXGate, Bit, Call, Neg, ASTNode
 
 abstract type ASTNode end
 
