@@ -665,3 +665,177 @@ end
     end
     @test has_break || has_continue  # At least one should be found
 end
+@testset "QASM 3.0 print_qasm coverage" begin
+    # Test classical type printing
+    @testset "Classical types" begin
+        @test sprint(Types.print_qasm, IntType()) == "int"
+        @test sprint(Types.print_qasm, IntType(Token{:int}("32"))) == "int[32]"
+        @test sprint(Types.print_qasm, UIntType()) == "uint"
+        @test sprint(Types.print_qasm, UIntType(Token{:int}("64"))) == "uint[64]"
+        @test sprint(Types.print_qasm, FloatType()) == "float"
+        @test sprint(Types.print_qasm, FloatType(Token{:int}("64"))) == "float[64]"
+        @test sprint(Types.print_qasm, BitType()) == "bit"
+        @test sprint(Types.print_qasm, BitType(Token{:int}("5"))) == "bit[5]"
+        @test sprint(Types.print_qasm, AngleType()) == "angle"
+        @test sprint(Types.print_qasm, AngleType(Token{:int}("20"))) == "angle[20]"
+    end
+
+    # Test classical declarations
+    @testset "Classical declarations" begin
+        decl1 = ClassicalDecl(false, IntType(Token{:int}("32")), Token{:id}("x"), nothing)
+        @test occursin("int[32]", sprint(Types.print_qasm, decl1))
+        @test occursin("x", sprint(Types.print_qasm, decl1))
+
+        decl2 = ClassicalDecl(true, FloatType(Token{:int}("64")), Token{:id}("y"), Token{:float64}("3.14"))
+        @test occursin("const", sprint(Types.print_qasm, decl2))
+        @test occursin("float[64]", sprint(Types.print_qasm, decl2))
+        @test occursin("y", sprint(Types.print_qasm, decl2))
+        @test occursin("3.14", sprint(Types.print_qasm, decl2))
+    end
+
+    # Test qubit declarations
+    @testset "Qubit declarations" begin
+        decl1 = QubitDecl(nothing, Token{:id}("q"))
+        @test occursin("qubit", sprint(Types.print_qasm, decl1))
+        @test occursin("q", sprint(Types.print_qasm, decl1))
+
+        decl2 = QubitDecl(Token{:id}("q"), Token{:int}("2"))
+        @test occursin("qubit[2]", sprint(Types.print_qasm, decl2))
+        @test occursin("q", sprint(Types.print_qasm, decl2))
+    end
+
+    # Test control flow statements
+    @testset "If-else statements" begin
+        # If without else
+        if_stmt = IfElseStmt(Token{:id}("c"), [Token{:id}("x")], nothing)
+        output = sprint(Types.print_qasm, if_stmt)
+        @test occursin("if", output)
+        @test occursin("c", output)
+
+        # If with else
+        if_else = IfElseStmt(Token{:id}("c"), [Token{:id}("x")], [Token{:id}("y")])
+        output2 = sprint(Types.print_qasm, if_else)
+        @test occursin("if", output2)
+        @test occursin("else", output2)
+    end
+
+    @testset "While statements" begin
+        while_stmt = WhileStmt(Token{:id}("c"), [Token{:id}("x")])
+        output = sprint(Types.print_qasm, while_stmt)
+        @test occursin("while", output)
+        @test occursin("c", output)
+    end
+
+    @testset "For statements" begin
+        # For with range
+        range = RangeExpr(Token{:int}("0"), Token{:int}("10"))
+        for_stmt = ForStmt(IntType(), Token{:id}("i"), range, [Token{:id}("x")])
+        output = sprint(Types.print_qasm, for_stmt)
+        @test occursin("for", output)
+        @test occursin("int", output)
+        @test occursin("i", output)
+        @test occursin("in", output)
+
+        # For with discrete set
+        set = DiscreteSet([Token{:int}("1"), Token{:int}("5"), Token{:int}("10")])
+        for_stmt2 = ForStmt(IntType(), Token{:id}("i"), set, [Token{:id}("x")])
+        output2 = sprint(Types.print_qasm, for_stmt2)
+        @test occursin("for", output2)
+        @test occursin("{", output2)
+        @test occursin("1", output2)
+        @test occursin("5", output2)
+        @test occursin("10", output2)
+    end
+
+    @testset "Range and set printing" begin
+        # Range without step
+        range1 = RangeExpr(Token{:int}("0"), Token{:int}("10"))
+        @test occursin("[0:10]", sprint(Types.print_qasm, range1))
+
+        # Range with step
+        range2 = RangeExpr(Token{:int}("0"), Token{:int}("2"), Token{:int}("10"))
+        @test occursin("[0:2:10]", sprint(Types.print_qasm, range2))
+
+        # Discrete set
+        set = DiscreteSet([Token{:int}("1"), Token{:int}("5")])
+        output = sprint(Types.print_qasm, set)
+        @test occursin("{", output)
+        @test occursin("1", output)
+        @test occursin("5", output)
+        @test occursin("}", output)
+    end
+
+    @testset "Break and continue" begin
+        @test sprint(Types.print_qasm, BreakStmt()) == "break;"
+        @test sprint(Types.print_qasm, ContinueStmt()) == "continue;"
+    end
+
+    @testset "Gate modifiers" begin
+        @test sprint(Types.print_qasm, GateModifier(:inv)) == "inv"
+        @test sprint(Types.print_qasm, GateModifier(:ctrl)) == "ctrl"
+        @test sprint(Types.print_qasm, GateModifier(:negctrl)) == "negctrl"
+        
+        pow_mod = GateModifier(:pow, Token{:int}("2"))
+        output = sprint(Types.print_qasm, pow_mod)
+        @test occursin("pow", output)
+        @test occursin("2", output)
+    end
+
+    @testset "Modified gates" begin
+        bit = Bit(Token{:id}("q"), Token{:int}("0"))
+        inst = Instruction("h", Any[], Any[bit])
+        mod_gate = ModifiedGate([GateModifier(:inv)], inst)
+        
+        output = sprint(Types.print_qasm, mod_gate)
+        @test occursin("inv", output)
+        @test occursin("@", output)
+        @test occursin("h", output)
+    end
+
+    @testset "Input/Output declarations" begin
+        input_decl = InputDecl(FloatType(Token{:int}("64")), Token{:id}("theta"))
+        output = sprint(Types.print_qasm, input_decl)
+        @test occursin("input", output)
+        @test occursin("float[64]", output)
+        @test occursin("theta", output)
+        @test occursin(";", output)
+
+        output_decl = OutputDecl(BitType(Token{:int}("2")), Token{:id}("c"))
+        output2 = sprint(Types.print_qasm, output_decl)
+        @test occursin("output", output2)
+        @test occursin("bit[2]", output2)
+        @test occursin("c", output2)
+        @test occursin(";", output2)
+    end
+
+    # Test round-trip: parse -> print -> parse
+    @testset "Round-trip tests" begin
+        qasm1 = """
+        OPENQASM 3.0;
+        int[32] x = 5;
+        """
+        ast1 = OpenQASM.parse(qasm1)
+        printed1 = sprint(Types.print_qasm, ast1)
+        ast1_reparsed = OpenQASM.parse(printed1)
+        @test ast1_reparsed isa MainProgram
+
+        qasm2 = """
+        OPENQASM 3.0;
+        qubit[2] q;
+        """
+        ast2 = OpenQASM.parse(qasm2)
+        printed2 = sprint(Types.print_qasm, ast2)
+        ast2_reparsed = OpenQASM.parse(printed2)
+        @test ast2_reparsed isa MainProgram
+
+        qasm3 = """
+        OPENQASM 3.0;
+        input float[64] theta;
+        output bit c;
+        """
+        ast3 = OpenQASM.parse(qasm3)
+        printed3 = sprint(Types.print_qasm, ast3)
+        ast3_reparsed = OpenQASM.parse(printed3)
+        @test ast3_reparsed isa MainProgram
+    end
+end
