@@ -39,8 +39,6 @@ using OpenQASM
 
     # Test for persistent tasks
     @testset "Persistent tasks" begin
-        # Skip persistent tasks test - it fails due to precompilation issues
-        # with RBNF.Token wrapper constructor
-        Aqua.test_persistent_tasks(OpenQASM; broken=true)
+        Aqua.test_persistent_tasks(OpenQASM)
     end
 end

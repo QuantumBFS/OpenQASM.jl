@@ -14,10 +14,6 @@ struct QASM3Lang end
 # Customize struct names to avoid collisions with QASM 2.0
 RBNF.typename(::Type{QASM3Lang}, name::Symbol) = Symbol(:QASM3_, name)
 
-# QASM 3.0 specific type conversions (only define what's unique to v3.0)
-Base.convert(::Type{Bool}, t::Token{:reserved}) = (t.str == "const")
-Base.convert(::Type{Bool}, ::Nothing) = false
-
 # RBNF crate methods for QASM 3.0 specific types
 RBNF.crate(::Type{TypesV3.QASMType}) = TypesV3.IntType()
 RBNF.crate(::Type{TypesV3.IntType}) = TypesV3.IntType()
@@ -181,7 +177,7 @@ RBNF.@parser QASM3Lang begin
     # ========== Expressions ==========
 
     # Expression grammar with operator precedence
-    # Supports: logical (&&, ||), comparison (==, !=, <, >, <=, >=), arithmetic (+, -, *, /, %), power (**)
+    # Supports: logical (&&, ||), comparison (==, !=, <, >, <=, >=), arithmetic (+, -, *, /)
 
     expr = logical_or_expr
 

@@ -95,7 +95,7 @@ This package currently supports the following OpenQASM 3.0 features:
 - **Control Flow**: `if-else`, `while`, `for` loops, `break`, `continue`
   ```julia
   if (c == 1) { x q; } else { h q; }
-  while (i < 10) { i = i + 1; }
+  while (c == 0) { x q; }
   for int i in [0:10] { ... }
   for int i in {1, 5, 10} { ... }
   ```
@@ -141,7 +141,7 @@ Important differences to be aware of when migrating from QASM 2.0 to 3.0:
 
 2. **New Syntax**: Prefer `qubit[n]` over `qreg`, and `bit[n]` over `creg` in QASM 3.0 (though legacy syntax is still supported)
 
-3. **Enhanced Expressions**: QASM 3.0 supports logical operators (`&&`, `||`), comparison operators (`==`, `!=`, `<`, `>`, `<=`, `>=`), and power operator (`**`)
+3. **Enhanced Expressions**: QASM 3.0 supports logical operators (`&&`, `||`) and comparison operators (`==`, `!=`, `<`, `>`, `<=`, `>=`)
 
 ## Roadmap
 
