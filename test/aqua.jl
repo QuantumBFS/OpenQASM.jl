@@ -4,15 +4,12 @@ using OpenQASM
 
 @testset "Aqua quality assurance" begin
     # Test for type piracy
-    # Note: We explicitly allow certain piracies that are required for RBNF integration
-    # These are documented in src/token_wrappers.jl
     @testset "Type piracy detection" begin
-        # Aqua will detect the type piracies we have
-        # We test this to make them explicit and documented
-        Aqua.test_piracies(OpenQASM;
-            broken = true,  # We expect piracies due to RBNF integration
-            # TODO: Remove piracies by migrating all parsers to QASMToken wrapper
-        )
+        # Type piracy is unavoidable in this package due to RBNF's architecture.
+        # RBNF requires Base.convert methods for Token types and RBNF.crate methods
+        # for standard types. These are documented in src/token_wrappers.jl.
+        # The only alternative would be to modify RBNF itself.
+        Aqua.test_piracies(OpenQASM; broken = true)
     end
 
     # Test for method ambiguities
